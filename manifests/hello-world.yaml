@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello-world
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/davidmdm/yokecd-demo
+    path: ./manifests/
+    targetRevision: main
+
+    plugin:
+      name: yokecd
+      parameters:
+        - name: wasmURL
+          string: https://github.com/davidmdm/yokecd-demo/releases/download/v0.0.0/hello-world.wasm
+
+  destination:
+    name: in-cluster
+    namespace: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

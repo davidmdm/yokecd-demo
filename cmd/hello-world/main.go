@@ -26,24 +26,25 @@ func run() error {
 
 	flag.Parse()
 
-	dep := appsv1.Deployment(name, "").
+	container := corev1.Container().
+		WithName(name).
+		WithImage("alpine:latest").
+		WithCommand("watch", "echo", "hello", "world")
+
+	podTemplate := corev1.PodTemplateSpec().
 		WithLabels(labels).
-		WithSpec(
-			appsv1.DeploymentSpec().
-				WithReplicas(int32(*replicas)).
-				WithSelector(metav1.LabelSelector().WithMatchLabels(labels)).
-				WithTemplate(
-					corev1.PodTemplateSpec().
-						WithLabels(labels).
-						WithSpec(
-							corev1.PodSpec().WithContainers(
-								corev1.Container().
-									WithName(name).
-									WithImage("alpine:latest").
-									WithCommand("watch", "echo", "hello", "world"),
-							)),
-				),
+		WithSpec(corev1.PodSpec().WithContainers(container))
+
+	spec := appsv1.DeploymentSpec().
+		WithReplicas(int32(*replicas)).
+		WithSelector(metav1.LabelSelector().WithMatchLabels(labels)).
+		WithTemplate(
+			podTemplate,
 		)
 
-	return json.NewEncoder(os.Stdout).Encode(dep)
+	deployment := appsv1.Deployment(name, "").
+		WithLabels(labels).
+		WithSpec(spec)
+
+	return json.NewEncoder(os.Stdout).Encode(deployment)
 }

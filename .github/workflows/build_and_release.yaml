@@ -1,0 +1,34 @@
+name: Build and release
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_GH_TOKEN }}
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v3.3.1
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+          cache: true
+
+      - name: Build and Release Flights
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.CI_GH_TOKEN }}
+        run: |
+          git config --global url."https://${{ secrets.CI_GH_TOKEN }}@github.com/".insteadOf https://github.com/
+
+          go env -w 'GOPRIVATE=github.com/davidmdm/*'
+          go run ./cmd/internal/releaser
