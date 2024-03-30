@@ -53,8 +53,6 @@ func run() error {
 		return nil
 	})
 
-	fmt.Println(versions)
-
 	releaser := Releaser{
 		Versions: versions,
 		Repo:     repo,
