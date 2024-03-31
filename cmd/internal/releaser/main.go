@@ -40,6 +40,7 @@ func run() error {
 	versions := map[string]string{}
 
 	iter.ForEach(func(r *plumbing.Reference) error {
+		fmt.Println("detected tag:", r.Name().String())
 		release, version := path.Split(r.Name()[len("refs/tags/"):].String())
 		if !semver.IsValid(version) {
 			return nil
@@ -130,6 +131,7 @@ func (releaser Releaser) handlePath(name string) error {
 				to   = change.To.Name
 			)
 			if strings.HasPrefix(from, "cmd/"+name+"/") || strings.HasPrefix(to, "cmd/"+name+"/") {
+				fmt.Printf("detected change from %s to %s\n", from, to)
 				changed = true
 				break
 			}
@@ -138,6 +140,8 @@ func (releaser Releaser) handlePath(name string) error {
 		if !changed {
 			return nil
 		}
+	} else {
+		fmt.Println("No version found for", name)
 	}
 
 	outputPath, err := build(filepath.Join("cmd", name))
