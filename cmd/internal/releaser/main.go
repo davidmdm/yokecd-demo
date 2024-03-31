@@ -13,8 +13,6 @@ import (
 	"github.com/davidmdm/x/xerr"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 	"golang.org/x/mod/semver"
 )
 
@@ -95,23 +93,47 @@ func (releaser Releaser) handlePath(name string) error {
 			return fmt.Errorf("failed to resolve: %s: %w", tag, err)
 		}
 
-		objects, err := releaser.Repo.Log(&git.LogOptions{
-			Order: git.LogOrderCommitterTime,
-			PathFilter: func(path string) bool {
-				return strings.HasPrefix(path, filepath.Join("cmd", name)+string(filepath.Separator))
-			},
-		})
+		commit, err := releaser.Repo.CommitObject(*hash)
 		if err != nil {
-			return fmt.Errorf("failed to get git log: %w", err)
+			return fmt.Errorf("failed to get commit for tag %s: %w", tag, err)
+		}
+
+		h, err := releaser.Repo.Head()
+		if err != nil {
+			return fmt.Errorf("failed to resolve head: %w", err)
+		}
+
+		head, err := releaser.Repo.CommitObject(h.Hash())
+		if err != nil {
+			return fmt.Errorf("failed to get head commit: %w", err)
+		}
+
+		headTree, err := head.Tree()
+		if err != nil {
+			return fmt.Errorf("failed to get tree for head commit: %w", err)
+		}
+
+		commitTree, err := commit.Tree()
+		if err != nil {
+			return fmt.Errorf("failed to get tree for tag commit: %w", err)
+		}
+
+		changes, err := headTree.Diff(commitTree)
+		if err != nil {
+			return fmt.Errorf("failed to diff trees: %w", err)
 		}
 
 		var changed bool
-		objects.ForEach(func(c *object.Commit) error {
-			if c.Hash != *hash {
+		for _, change := range changes {
+			var (
+				from = change.From.Name
+				to   = change.To.Name
+			)
+			if strings.HasPrefix(from, "cmd/"+name+"/") || strings.HasPrefix(to, "cmd/"+name+"/") {
 				changed = true
+				break
 			}
-			return storer.ErrStop
-		})
+		}
 
 		if !changed {
 			return nil
