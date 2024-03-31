@@ -15,7 +15,7 @@ spec:
       name: yokecd
       parameters:
         - name: wasmURL
-          string: https://github.com/davidmdm/yokecd-demo/releases/download/v0.0.0/hello-world.wasm
+          string: https://github.com/davidmdm/yokecd-demo/releases/download/hello-world%2Fv1/hello-world.wasm
 
   destination:
     name: in-cluster

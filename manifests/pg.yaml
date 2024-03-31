@@ -15,7 +15,7 @@ spec:
       name: yokecd
       parameters:
         - name: wasmURL
-          string: https://github.com/davidmdm/yokecd-demo/releases/download/v0.0.0/pg.wasm
+          string: https://github.com/davidmdm/yokecd-demo/releases/download/pg%2Fv1/pg.wasm
 
   destination:
     name: in-cluster
