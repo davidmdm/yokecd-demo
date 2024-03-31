@@ -42,7 +42,7 @@ func run() error {
 			podTemplate,
 		)
 
-	deployment := appsv1.Deployment(name, "").
+	deployment := appsv1.Deployment(name, os.Getenv("NAMESPACE")).
 		WithLabels(labels).
 		WithSpec(spec)
 
