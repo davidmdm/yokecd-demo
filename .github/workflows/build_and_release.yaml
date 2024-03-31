@@ -16,6 +16,7 @@ jobs:
         with:
           token: ${{ secrets.CI_GH_TOKEN }}
           fetch-tags: true
+          fetch-depth: 0
 
       - name: Setup Go environment
         uses: actions/setup-go@v3.3.1
