@@ -149,7 +149,7 @@ func (releaser Releaser) handlePath(name string) error {
 		return fmt.Errorf("failed to build wasm: %w", err)
 	}
 
-	v, _ := strconv.Atoi(semver.Major(version))
+	v, _ := strconv.Atoi(semver.Major(version)[1:])
 	tag := fmt.Sprintf("%s/v%d", name, v+1)
 
 	if releaser.DryRun {
