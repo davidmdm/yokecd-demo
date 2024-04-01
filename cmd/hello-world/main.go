@@ -38,9 +38,7 @@ func run() error {
 	spec := appsv1.DeploymentSpec().
 		WithReplicas(int32(*replicas)).
 		WithSelector(metav1.LabelSelector().WithMatchLabels(labels)).
-		WithTemplate(
-			podTemplate,
-		)
+		WithTemplate(podTemplate)
 
 	deployment := appsv1.Deployment(name, os.Getenv("NAMESPACE")).
 		WithLabels(labels).
