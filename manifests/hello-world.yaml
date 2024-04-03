@@ -15,7 +15,7 @@ spec:
       name: yokecd
       parameters:
         - name: wasmPath
-          string: main.wasm
+          string: main.wasm.gz
 
   destination:
     name: in-cluster
