@@ -14,7 +14,7 @@ spec:
     plugin:
       name: yokecd
       parameters:
-        - name: wasmURL
+        - name: wasm
           string: https://github.com/davidmdm/yokecd-demo/releases/download/pg%2Fv1/pg.wasm
 
   destination:
