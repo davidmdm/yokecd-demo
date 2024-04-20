@@ -14,7 +14,7 @@ spec:
     plugin:
       name: yokecd
       parameters:
-        - name: wasmURL
+        - name: wasm
           string: https://github.com/davidmdm/yokecd-demo/releases/download/hello-world%2Fv1/hello-world.wasm
 
   destination:
