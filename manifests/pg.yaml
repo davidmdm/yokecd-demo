@@ -8,14 +8,14 @@ spec:
 
   source:
     repoURL: https://github.com/davidmdm/yokecd-demo
-    path: ./manifests/
+    path: ./cmd/pg/
     targetRevision: main
 
     plugin:
       name: yokecd
       parameters:
-        - name: wasm
-          string: https://github.com/davidmdm/yokecd-demo/releases/download/pg%2Fv1/pg.wasm
+        - name: build
+          string: 'true'
 
   destination:
     name: in-cluster

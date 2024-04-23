@@ -8,14 +8,14 @@ spec:
 
   source:
     repoURL: https://github.com/davidmdm/yokecd-demo
-    path: ./manifests/
+    path: ./cmd/hello-world
     targetRevision: main
 
     plugin:
       name: yokecd
       parameters:
-        - name: wasm
-          string: https://github.com/davidmdm/yokecd-demo/releases/download/hello-world%2Fv1/hello-world.wasm
+        - name: build
+          string: 'true'
 
   destination:
     name: in-cluster
