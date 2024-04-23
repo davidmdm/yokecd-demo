@@ -8,14 +8,14 @@ spec:
 
   source:
     repoURL: https://github.com/davidmdm/yokecd-demo
-    path: ./manifests/
+    path: ./cmd/pg/
     targetRevision: main
 
     plugin:
       name: yokecd
       parameters:
         - name: build
-          string: 'true'
+          string: unsafe
 
   destination:
     name: in-cluster
