@@ -22,7 +22,7 @@ func run() error {
 	name := os.Args[0] + "-sample-app"
 	labels := map[string]string{"app": name}
 
-	replicas := flag.Int("replicas", 2, "desired replica count for deployment")
+	replicas := flag.Int("replicas", 3, "desired replica count for deployment")
 
 	flag.Parse()
 
