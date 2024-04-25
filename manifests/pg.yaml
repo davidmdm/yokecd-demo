@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/davidmdm/yokecd-demo
     path: ./cmd/pg/
-    targetRevision: main
+    targetRevision: buildmode
 
     plugin:
       name: yokecd
