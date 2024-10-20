@@ -1,8 +1,10 @@
 package main
 
 import (
+	"compress/gzip"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -144,9 +146,14 @@ func (releaser Releaser) handlePath(name string) error {
 		fmt.Println("No version found for", name)
 	}
 
-	outputPath, err := build(filepath.Join("cmd", name))
+	buildPath, err := build(filepath.Join("cmd", name))
 	if err != nil {
 		return fmt.Errorf("failed to build wasm: %w", err)
+	}
+
+	compressPath, err := compress(buildPath)
+	if err != nil {
+		return fmt.Errorf("failed to compress wasm: %w", err)
 	}
 
 	v, _ := strconv.Atoi(semver.Major(version)[1:])
@@ -156,7 +163,7 @@ func (releaser Releaser) handlePath(name string) error {
 		fmt.Println("dry-run: create realease", tag)
 		return nil
 	}
-	if err := release(tag, outputPath); err != nil {
+	if err := release(tag, []string{buildPath, compressPath}); err != nil {
 		return fmt.Errorf("failed to release: %w", err)
 	}
 
@@ -178,10 +185,37 @@ func build(path string) (string, error) {
 	return out, nil
 }
 
-func release(tag, path string) error {
-	out, err := exec.Command("gh", "release", "create", tag, path).CombinedOutput()
+func release(tag string, paths []string) error {
+	args := append([]string{"release", "create", tag}, paths...)
+
+	out, err := exec.Command("gh", args...).CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("%w: %s", err, out)
 	}
 	return nil
+}
+
+func compress(path string) (string, error) {
+	src, err := os.Open(path)
+	if err != nil {
+		return "", fmt.Errorf("failed to open source file: %w", err)
+	}
+	defer src.Close()
+
+	dstPath := path + ".gz"
+
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to create destination: %w", err)
+	}
+	defer dst.Close()
+
+	w := gzip.NewWriter(dst)
+	defer w.Close()
+
+	if _, err := io.Copy(w, src); err != nil {
+		return "", err
+	}
+
+	return dstPath, nil
 }

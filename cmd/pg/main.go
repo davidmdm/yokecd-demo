@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/davidmdm/flights/postgresql"
+	"github.com/davidmdm/yoke/pkg/flight"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 }
 
 func run() error {
-	resources, err := postgresql.RenderChart(os.Args[0], os.Getenv("NAMESPACE"), &postgresql.Values{})
+	resources, err := postgresql.RenderChart(flight.Release(), flight.Namespace(), &postgresql.Values{})
 	if err != nil {
 		return fmt.Errorf("failed to render postgres chart: %w", err)
 	}
